@@ -1,0 +1,32 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --watch 'src/**/*.ts' --exec ts-node src/server.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@sequelize/mssql": "^7.0.0-alpha.41",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mssql2": "^3.3.1",
+    "sequelize": "^6.37.3",
+    "sequelize-query": "^1.0.4",
+    "tedious": "^18.3.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/express": "4.17.17",
+    "nodemon": "2.0.20",
+    "sequelize-cli": "^6.6.2",
+    "ts-node": "^10.9.2",
+    "tsc-watch": "6.0.0",
+    "typescript": "4.9.5"
+  }
+}
