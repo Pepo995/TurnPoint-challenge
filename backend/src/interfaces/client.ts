@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-enum FundingSource {
+export enum FundingSource {
     ndis = "NDIS",
     hcp = "HCP",
     chsp = "CHSP",
