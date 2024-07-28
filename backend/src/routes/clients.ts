@@ -1,11 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
-import {
-    CreateClientParams,
-    createClientParams,
-    getClientParams,
-    updateClientParams,
-} from '../interfaces';
-import { getClients, create, deleteClient, updateClient } from '../controllers';
+import { CreateClientParams, createClientParams, getClientParams, updateClientParams } from '../interfaces';
+import { getClients, create, deleteClient, updateClient } from '../service';
 
 const router = express.Router();
 
@@ -41,18 +36,17 @@ router.delete('/:id', async ({ params }: Request, res: Response, next: NextFunct
 });
 
 router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const {body, params} = req;
-      const { id } = getClientParams.parse(params);
-      body.dob = new Date(body.dob);
-      
-      const updatedAtributes = updateClientParams.parse(body);
-      const data = await updateClient(id, updatedAtributes);
-      res.status(200).send(data);
-    } catch (error: any) {
-      next(error);
-    }
-  },
-);
+  try {
+    const { body, params } = req;
+    const { id } = getClientParams.parse(params);
+    body.dob = new Date(body.dob);
+
+    const updatedAtributes = updateClientParams.parse(body);
+    const data = await updateClient(id, updatedAtributes);
+    res.status(200).send(data);
+  } catch (error: any) {
+    next(error);
+  }
+});
 
 export default router;
