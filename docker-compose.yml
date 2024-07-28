@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: mssql_db
+    user: root
+    ports:
+      - "1434:1433"
+    environment:
+      SA_PASSWORD: "YourStrong!Passw0rd123"
+      ACCEPT_EULA: "Y"
+    command: /bin/bash -c "(/opt/mssql/bin/sqlservr &) && /app/init-db.sh"
+    volumes:
+      - ./init-db.sh:/app/init-db.sh
+      - mssql-data:/var/opt/mssql
+
+volumes:
+  mssql-data:
+
