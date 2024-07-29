@@ -22,7 +22,17 @@ git clone https://github.com/Pepo995/TurnPoint-challenge.git
 cd TurnPoint-challenge
 ```
 
-### 2. Configure and Run Docker
+### 2. Line Ending Configuration
+
+It is crucial to ensure that the init-db.sh (in proyect root) file has the line ending set to "LF" (Line Feed) to avoid errors when running shell scripts. To set this in your text editor:
+
+- **Visual Studio Code**: Open init-db.sh, click on "CRLF" at the bottom right, and change it to "LF".
+- **Sublime Text**: Open the file and select "View" > "Line Endings" > "Unix".
+- **Atom**: Open the file and select "Edit" > "Line Endings" > "LF (Unix)".
+
+**Save the file after making this change.**
+
+### 3. Configure and Run Docker
 
 In the root of the project, run the following command to build and start the Docker containers:
 
@@ -34,16 +44,28 @@ This command may take a few minutes as it will pull the mcr.microsoft.com/mssql/
 
 **Note**: This command will leave the Docker container running, so for the next steps, you will need to open another terminal.
 
-### 3. Set Up and Run the Backend
+### 4. Set Up and Run the Backend
 
-In a new terminal, navigate to the backend directory and install the dependencies:
+- In a new terminal, navigate to the backend directory and install the dependencies:
 
 ```sh
 cd backend
 npm install
 ```
 
-## 4. Run Migrations and Seeds
+- Create a .env file in the backend directory with the following environment variables:
+
+```sh
+PORT=5000
+DB_USER=sa
+DB_HOST=localhost
+DB_PORT=1434
+DB_DIALECT=mssql
+DB_NAME=turnPointdb
+DB_PASSWORD=YourStrong!Passw0rd123
+```
+
+## 5. Run Migrations and Seeds
 
 Next, run the migrations and seeds to set up the database:
 
@@ -52,7 +74,7 @@ npx sequelize-cli db:migrate
 npx sequelize-cli db:seed:all
 ```
 
-## 5. Run Tests
+## 6. Run Tests
 
 To verify that everything is set up correctly, run the tests:
 
@@ -60,7 +82,7 @@ To verify that everything is set up correctly, run the tests:
 npm test
 ```
 
-## 6. Start the Backend
+## 7. Start the Backend
 
 Start the backend and leave it running:
 
@@ -68,7 +90,7 @@ Start the backend and leave it running:
 npm run dev
 ```
 
-## 7. Set Up and Run the Frontend
+## 8. Set Up and Run the Frontend
 
 In another new terminal (leaving the other two terminals running: Docker and the backend), navigate to the frontend directory and install the dependencies:
 
