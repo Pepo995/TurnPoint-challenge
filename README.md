@@ -22,9 +22,11 @@ git clone https://github.com/Pepo995/TurnPoint-challenge.git
 cd TurnPoint-challenge
 ```
 
+After cloning the repository, open the proyect in your text editor.
+
 ### 2. Line Ending Configuration
 
-It is crucial to ensure that the init-db.sh (in proyect root) file has the line ending set to "LF" (Line Feed) to avoid errors when running shell scripts. To set this in your text editor:
+It is crucial to ensure that the init-db.sh file (in proyect root) has the line ending set to "LF" (Line Feed) to avoid errors when running shell scripts. To set this in your text editor:
 
 - **Visual Studio Code**: Open init-db.sh, click on "CRLF" at the bottom right, and change it to "LF".
 - **Sublime Text**: Open the file and select "View" > "Line Endings" > "Unix".
@@ -105,7 +107,7 @@ Start the frontend and access the application in your browser:
 npm run dev
 ```
 
-Open your browser and navigate to http://localhost:5173 to see the application running with the seeded clients
+Open your browser and navigate to http://127.0.0.1:5173 or http://localhost:5173 to see the application running with the seeded clients
 
 ## API Testing Collection
 
