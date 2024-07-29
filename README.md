@@ -35,6 +35,7 @@ This command may take a few minutes as it will pull the mcr.microsoft.com/mssql/
 **Note**: This command will leave the Docker container running, so for the next steps, you will need to open another terminal.
 
 ### 3. Set Up and Run the Backend
+
 In a new terminal, navigate to the backend directory and install the dependencies:
 
 ```sh
@@ -43,6 +44,7 @@ npm install
 ```
 
 ## 4. Run Migrations and Seeds
+
 Next, run the migrations and seeds to set up the database:
 
 ```sh
@@ -51,6 +53,7 @@ npx sequelize-cli db:seed:all
 ```
 
 ## 5. Run Tests
+
 To verify that everything is set up correctly, run the tests:
 
 ```sh
@@ -58,6 +61,7 @@ npm test
 ```
 
 ## 6. Start the Backend
+
 Start the backend and leave it running:
 
 ```sh
@@ -65,6 +69,7 @@ npm run dev
 ```
 
 ## 7. Set Up and Run the Frontend
+
 In another new terminal (leaving the other two terminals running: Docker and the backend), navigate to the frontend directory and install the dependencies:
 
 ```sh
@@ -79,3 +84,32 @@ npm run dev
 ```
 
 Open your browser and navigate to http://localhost:5173 to see the application running with the seeded clients
+
+## API Testing Collection
+
+In the **Postman-Collection** folder, you will find a Postman collection for testing the API endpoints. Here are the details of the available requests:
+
+- **GetClients**
+- **CreateClient**
+- **DeleteClient**
+- **UpdateClient**
+
+You can import this collection into Postman to easily test your API endpoints.
+
+## User Scenarios
+
+### Client Creation Scenarios
+
+The following scenarios are handled in the UI for creating clients:
+
+**1. Creating a Client with a Future Date of Birth:**
+
+- **Frontend Handling**: The form will prevent submission if the date of birth is set to a future date. An error message will be displayed on the screen indicating that the Date of Birth must be in the past.
+
+**2. Omitting an Optional Field:**
+
+- **Frontend Handling**: All fields except **secondaryLanguage** are mandatory in the form. If any mandatory field is omitted, the form will display an error message and prevent submission until all required fields are filled.
+
+**3. Creating a Client with a Duplicate Name:**
+
+- **Backend Handling**: If a client with the same name already exists, the backend will respond with an error message. This will trigger a toast notification on the frontend indicating that the client name already exists.
