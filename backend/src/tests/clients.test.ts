@@ -145,8 +145,8 @@ describe('Client Service', () => {
       const result = await updateClient(1, updateParams);
 
       expect(result).toMatchObject(updateParams);
-      // expect(findOneSpy).toHaveBeenCalledWith({ where: { id: 1 } });
-      // expect(updateSpy).toHaveBeenCalledWith(updateParams, { where: { id: 1 } });
+      expect(findOneSpy).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(updateSpy).toHaveBeenCalledWith(updateParams);
     });
 
     it('should throw an error if the client does not exist', async () => {
@@ -165,36 +165,44 @@ describe('Client Service', () => {
       expect(updateSpy).not.toHaveBeenCalled();
     });
 
-    // it('should throw an error if the name already exists for another client', async () => {
-    //   const client = Client.build({
-    //     id: 1,
-    //     name: 'John Doe',
-    //     dob: new Date(),
-    //     mainLanguage: 'English',
-    //     fundingSource: FundingSource.ndis,
-    //   });
+    it('should throw an error if the name already exists for another client', async () => {
+      const client = Client.build({
+        id: 1,
+        name: 'John Doe',
+        dob: new Date(),
+        mainLanguage: 'English',
+        fundingSource: FundingSource.ndis,
+      });
 
-    //   const anotherClient = Client.build({
-    //     id: 2,
-    //     name: 'Jane Doe',
-    //     dob: new Date(),
-    //     mainLanguage: 'Spanish',
-    //     fundingSource: FundingSource.hcp,
-    //   });
+      const anotherClient = Client.build({
+        id: 2,
+        name: 'Jane Doe',
+        dob: new Date(),
+        mainLanguage: 'Spanish',
+        fundingSource: FundingSource.hcp,
+      });
 
-    //   mockedClient.findOne.mockResolvedValueOnce(client).mockResolvedValueOnce(anotherClient);
+      const findOneSpy = jest
+        .spyOn(Client, 'findOne')
+        .mockResolvedValueOnce(client)
+        .mockResolvedValueOnce(anotherClient);
 
-    //   await expect(
-    //     updateClient(1, {
-    //       name: 'Jane Doe',
-    //       dob: new Date(),
-    //       mainLanguage: 'Spanish',
-    //       fundingSource: FundingSource.hcp,
-    //     }),
-    //   ).rejects.toThrow('The name already exists');
-    //   expect(mockedClient.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
-    //   expect(mockedClient.findOne).toHaveBeenCalledWith({ where: { name: 'Jane Doe', id: { [Op.ne]: 1 } } });
-    //   expect(mockedClient.update).not.toHaveBeenCalled();
-    // });
+      const updateSpy = jest.spyOn(client, 'update').mockImplementation(async (updatedData) => {
+        Object.assign(client, updatedData);
+        return client;
+      });
+
+      await expect(
+        updateClient(1, {
+          name: 'Jane Doe',
+          dob: new Date(),
+          mainLanguage: 'Spanish',
+          fundingSource: FundingSource.hcp,
+        }),
+      ).rejects.toThrow('The name already exists');
+      expect(findOneSpy).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(findOneSpy).toHaveBeenCalledWith({ where: { name: 'Jane Doe', id: { [Op.ne]: 1 } } });
+      expect(updateSpy).not.toHaveBeenCalled();
+    });
   });
 });
