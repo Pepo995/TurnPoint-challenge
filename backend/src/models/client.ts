@@ -55,7 +55,7 @@ Client.init(
     sequelize: connection,
     tableName: 'clients',
     modelName: 'Client',
-  }
+  },
 );
 
 export default Client;

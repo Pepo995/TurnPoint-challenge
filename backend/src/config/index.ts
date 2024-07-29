@@ -9,6 +9,6 @@ export const connection = new Sequelize(
   {
     host: process.env.DB_HOST as string,
     port: databasePort as number,
-    dialect: "mssql",
+    dialect: 'mssql',
   },
 );
