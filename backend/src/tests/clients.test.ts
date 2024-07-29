@@ -3,14 +3,6 @@ import { Client, ClientAttributes } from '../models/client';
 import { FundingSource, CreateClientParams, UpdateClientParams } from '../interfaces';
 import { Op } from 'sequelize';
 
-jest.mock('../models/client');
-
-const mockedClient = Client as jest.Mocked<typeof Client>;
-
-// const dbMock = new SequelizeMock();
-
-// const ClientMock = dbMock.define('clients');
-
 describe('Client Service', () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -27,12 +19,12 @@ describe('Client Service', () => {
           fundingSource: FundingSource.ndis,
         } as ClientAttributes),
       ];
-      mockedClient.findAll.mockResolvedValue(clients);
+      const findAllSpy = jest.spyOn(Client, 'findAll').mockResolvedValue(clients);
 
       const result = await getClients();
 
       expect(result).toEqual(clients);
-      expect(mockedClient.findAll).toHaveBeenCalledTimes(1);
+      expect(findAllSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -46,13 +38,12 @@ describe('Client Service', () => {
         fundingSource: FundingSource.ndis,
       });
 
-      console.log('---client---', client);
-      mockedClient.findOne.mockResolvedValue(client);
+      const findOneSpy = jest.spyOn(Client, 'findOne').mockResolvedValue(client);
 
       const result = await getClient(1);
 
       expect(result).toEqual(client);
-      expect(mockedClient.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(findOneSpy).toHaveBeenCalledWith({ where: { id: 1 } });
     });
   });
 
@@ -68,33 +59,34 @@ describe('Client Service', () => {
 
       const createdClient = Client.build(newClient);
 
-      mockedClient.findOne.mockResolvedValue(null);
-      mockedClient.create.mockResolvedValue(createdClient);
+      const findOneSpy = jest.spyOn(Client, 'findOne').mockResolvedValue(null);
+      const createSpy = jest.spyOn(Client, 'create').mockResolvedValue(createdClient);
 
       const result = await create(newClient);
 
-      console.log('Created Client:', createdClient);
-      console.log('Result:', result);
-
       expect(result).toMatchObject(newClient);
-      expect(mockedClient.findOne).toHaveBeenCalledWith({ where: { name: newClient.name } });
-      expect(mockedClient.create).toHaveBeenCalledWith(newClient);
+      expect(findOneSpy).toHaveBeenCalledWith({ where: { name: newClient.name } });
+      expect(createSpy).toHaveBeenCalledWith(newClient);
     });
 
-    // it('should throw an error if the client already exists', async () => {
-    //   const existingClient = Client.build({
-    //     name: 'Jane Doe',
-    //     dob: new Date(),
-    //     mainLanguage: 'Spanish',
-    //     fundingSource: FundingSource.hcp,
-    //   });
+    it('should throw an error if the client already exists', async () => {
+      const existingClientParams: CreateClientParams = {
+        name: 'Jane Doe',
+        dob: new Date(),
+        mainLanguage: 'Spanish',
+        secondaryLanguage: 'English',
+        fundingSource: FundingSource.hcp,
+      };
 
-    //   mockedClient.findOne.mockResolvedValue(existingClient);
+      const existingClient = Client.build(existingClientParams);
 
-    //   await expect(create(existingClient)).rejects.toThrow('The client already exists');
-    //   expect(mockedClient.findOne).toHaveBeenCalledWith({ where: { name: existingClient.name } });
-    //   expect(mockedClient.create).not.toHaveBeenCalled();
-    // });
+      const findOneSpy = jest.spyOn(Client, 'findOne').mockResolvedValue(existingClient);
+      const createSpy = jest.spyOn(Client, 'create').mockResolvedValue(existingClient);
+
+      await expect(create(existingClientParams)).rejects.toThrow('The client already exists');
+      expect(findOneSpy).toHaveBeenCalledWith({ where: { name: existingClient.name } });
+      expect(createSpy).not.toHaveBeenCalled();
+    });
   });
 
   describe('deleteClient', () => {
@@ -107,22 +99,23 @@ describe('Client Service', () => {
         fundingSource: FundingSource.ndis,
       });
 
-      mockedClient.findOne.mockResolvedValue(client);
-      mockedClient.destroy.mockResolvedValue(1);
+      const findOneSpy = jest.spyOn(Client, 'findOne').mockResolvedValue(client);
+      const destroySpy = jest.spyOn(Client, 'destroy').mockResolvedValue(1);
 
       const result = await deleteClient(1);
 
       expect(result).toEqual(client);
-      expect(mockedClient.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
-      expect(mockedClient.destroy).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(findOneSpy).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(destroySpy).toHaveBeenCalledWith({ where: { id: 1 } });
     });
 
     it('should throw an error if the client does not exist', async () => {
-      mockedClient.findOne.mockResolvedValue(null);
+      const findOneSpy = jest.spyOn(Client, 'findOne').mockResolvedValue(null);
+      const destroySpy = jest.spyOn(Client, 'destroy').mockResolvedValue(1);
 
       await expect(deleteClient(1)).rejects.toThrow('The client does not exists');
-      expect(mockedClient.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
-      expect(mockedClient.destroy).not.toHaveBeenCalled();
+      expect(findOneSpy).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(destroySpy).not.toHaveBeenCalled();
     });
   });
 
@@ -143,19 +136,21 @@ describe('Client Service', () => {
         fundingSource: FundingSource.ndis,
       });
 
-      mockedClient.findOne.mockResolvedValueOnce(client).mockResolvedValueOnce(null);
-      mockedClient.update.mockResolvedValue([1]);
+      const findOneSpy = jest.spyOn(Client, 'findOne').mockResolvedValueOnce(client).mockResolvedValueOnce(null);
+      const updateSpy = jest.spyOn(client, 'update').mockImplementation(async (updatedData) => {
+        Object.assign(client, updatedData);
+        return client;
+      });
 
       const result = await updateClient(1, updateParams);
 
       expect(result).toMatchObject(updateParams);
-      expect(mockedClient.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
-      expect(mockedClient.update).toHaveBeenCalledWith(updateParams, { where: { id: 1 } });
+      expect(findOneSpy).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(updateSpy).toHaveBeenCalledWith(updateParams);
     });
 
     it('should throw an error if the client does not exist', async () => {
-      mockedClient.findOne.mockResolvedValue(null);
-
+      const findOneSpy = jest.spyOn(Client, 'findOne').mockResolvedValue(null);
       await expect(
         updateClient(1, {
           name: 'Jane Doe',
@@ -164,8 +159,10 @@ describe('Client Service', () => {
           fundingSource: FundingSource.hcp,
         }),
       ).rejects.toThrow('The client does not exists');
-      expect(mockedClient.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
-      expect(mockedClient.update).not.toHaveBeenCalled();
+      const updateSpy = jest.spyOn(Client, 'update').mockResolvedValue([1]);
+
+      expect(findOneSpy).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(updateSpy).not.toHaveBeenCalled();
     });
 
     it('should throw an error if the name already exists for another client', async () => {
@@ -185,7 +182,15 @@ describe('Client Service', () => {
         fundingSource: FundingSource.hcp,
       });
 
-      mockedClient.findOne.mockResolvedValueOnce(client).mockResolvedValueOnce(anotherClient);
+      const findOneSpy = jest
+        .spyOn(Client, 'findOne')
+        .mockResolvedValueOnce(client)
+        .mockResolvedValueOnce(anotherClient);
+
+      const updateSpy = jest.spyOn(client, 'update').mockImplementation(async (updatedData) => {
+        Object.assign(client, updatedData);
+        return client;
+      });
 
       await expect(
         updateClient(1, {
@@ -195,9 +200,9 @@ describe('Client Service', () => {
           fundingSource: FundingSource.hcp,
         }),
       ).rejects.toThrow('The name already exists');
-      expect(mockedClient.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
-      expect(mockedClient.findOne).toHaveBeenCalledWith({ where: { name: 'Jane Doe', id: { [Op.ne]: 1 } } });
-      expect(mockedClient.update).not.toHaveBeenCalled();
+      expect(findOneSpy).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(findOneSpy).toHaveBeenCalledWith({ where: { name: 'Jane Doe', id: { [Op.ne]: 1 } } });
+      expect(updateSpy).not.toHaveBeenCalled();
     });
   });
 });
