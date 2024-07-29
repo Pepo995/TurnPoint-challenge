@@ -19,7 +19,7 @@ First, clone the repository to your local machine:
 
 ```sh
 git clone https://github.com/Pepo995/TurnPoint-challenge.git
-cd <TurnPoint-challenge> (path to project directory)
+cd TurnPoint-challenge
 ```
 
 ### 2. Configure and Run Docker

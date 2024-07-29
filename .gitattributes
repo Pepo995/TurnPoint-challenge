@@ -1,0 +1,6 @@
+# Forcing all shell scripts to use LF
+*.sh text eol=lf
+
+# Forcing text files to use LF
+*.txt text eol=lf
+*.md text eol=lf
