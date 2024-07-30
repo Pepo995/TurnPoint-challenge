@@ -34,6 +34,68 @@ It is crucial to ensure that the init-db.sh file (in proyect root) has the line 
 
 **Save the file after making this change.**
 
+### 3. Set Execute Permissions for init-db.sh
+
+To ensure the `init-db.sh` script has the correct permissions before it's mounted in the container, you need to set the executable permission on the script on your host machine.
+
+Here's how you can do it:
+
+1. Open a terminal and navigate to the directory containing init-db.sh.
+
+2. Run the following command to add execute permissions to the script:
+
+```sh
+chmod +x init-db.sh
+```
+
+**Note**: In Windows, the command `chmod` is not available by default
+
+**If you are a Windows user, and you cannot run `chmod` commands, read this:**
+
+Here are some alternative methods:
+
+1. Using WSL (Windows Subsystem for Linux):
+
+- Open a WSL terminal.
+
+- Navigate to the directory containing init-db.sh.
+
+- Run the following command:
+
+```sh
+chmod +x init-db.sh
+```
+
+2. Using Git Bash:
+
+- Open Git Bash.
+
+- Navigate to the directory containing init-db.sh.
+
+- Run the following command:
+
+```sh
+chmod +x init-db.sh
+```
+
+3. Using Cygwin:
+
+- Install Cygwin if not already installed.
+
+- Open the Cygwin terminal.
+
+- Navigate to the directory containing init-db.sh.
+
+- Run the following command:
+
+```sh
+chmod +x init-db.sh
+```
+
+4. Modify the File on a Linux or macOS System:
+
+If you have access to a Linux or macOS system, you can change the permissions there and transfer the file back to your Windows environment.
+
 ### 3. Configure and Run Docker
 
 In the root of the project, run the following command to build and start the Docker containers:
@@ -75,6 +137,8 @@ Next, run the migrations and seeds to set up the database:
 npx sequelize-cli db:migrate
 npx sequelize-cli db:seed:all
 ```
+
+**Note**: If the command requests to install the `sequelize-cli` package, write `y` and then enter to continue.
 
 ## 6. Run Tests
 
